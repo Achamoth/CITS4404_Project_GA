@@ -14,7 +14,7 @@ def setSituations(sitFromRunner):
 def genInitialPopulation():
     #Generate the initial population of solution candidates randomly
     popSize = 150
-    population = [[random.randint(0,6) for x in range(243)] for y in range(popSize)]
+    population = [[random.randint(0,5) for x in range(243)] for y in range(popSize)]
     return population
 
 def checkFitness(individual):
@@ -124,6 +124,7 @@ def mateParents(population, fitnesses):
     return offspring
 
 def findParents(population, fitnesses, popSize):
+    #TODO: Look into this function
     #Find two parents to mate using k-way tournament selection (k = 10)
     parents = []
     #Find first parent
@@ -150,6 +151,7 @@ def findParents(population, fitnesses, popSize):
     return parents
 
 def getChildren(parents):
+    #TODO: Look into this function
     #Given a pair of parents, generate and return two children
     children = []
     splicePoint = random.randint(100,180)
