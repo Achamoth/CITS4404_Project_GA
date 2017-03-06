@@ -12,17 +12,17 @@ situations = FileOps.readSituations('Situations.txt')
 GeneticAlgorithm.setSituations(situations)
 
 #Find best solution over 1000 generations
-solution = naturalSelection(1000)
+solution = GeneticAlgorithm.naturalSelection(1000)
 
 #Test solution by running it on 200 actions with a robot in a random room, 100 times over, and finding average number of points
 sum = 0
-for i in Range(100):
+for i in range(100):
     #Generate new room and robot
     robot = Robot.Robot()
     room = Room.Room()
     #Assign best solution to robot as its strategy
     robot.changeStrat(solution)
-    for j in Range(200):
+    for j in range(200):
         #Run 200 actions using strategy
         robot.decide(room, situations)
     #Add number of points to cumulative sum
@@ -32,3 +32,4 @@ avg = sum / 100
 
 #Print average
 print 'Average Points: ' + str(avg)
+print 'Strategy: ' + str(solution)
