@@ -109,7 +109,7 @@ def mateParents(population, fitnesses):
     initPopSize = len(population)
 
     #Create population of empty offspring
-    offspring = [[0 for y in range(242)] for x in range(initPopSize)]
+    offspring = [[0 for y in range(243)] for x in range(initPopSize)]
 
     #Probabalistically mate parents based on fitness until a full population of offspring is produced. Use 10-way tournament selection
     numOffspring = 0
@@ -152,7 +152,7 @@ def findParents(population, fitnesses, popSize):
 def getChildren(parents):
     #Given a pair of parents, generate and return two children
     children = []
-    splicePoint = random.randint(0,242)
+    splicePoint = random.randint(100,180)
     #Get 0-slicePoint chunk from first parent
     parent1FirstChunk = (parents[0])[0:splicePoint]
     #Get slicePoint-242 chunk from first parent

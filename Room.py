@@ -1,6 +1,7 @@
 # Author : Ammar Abu Shamleh
 
 import random
+import sys
 
 class Room(object):
 
@@ -54,3 +55,15 @@ class Room(object):
             return 1
         else:
             return 0
+
+    def printRoom(self):
+        #Print the room as a string
+        for x in range(9):
+            for y in range(9):
+                if(self.cans[x][y] == 1):
+                    sys.stdout.write('C ')
+                else:
+                    sys.stdout.write('E ')
+                sys.stdout.flush()
+            sys.stdout.write('\n')
+            sys.stdout.flush()
