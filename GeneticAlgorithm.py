@@ -14,7 +14,7 @@ def setSituations(sitFromRunner):
 def genInitialPopulation():
     #Generate the initial population of solution candidates randomly
     popSize = 150
-    population = [[random.randint(0,5) for x in range(243)] for y in range(popSize)]
+    population = [[random.randint(0,6) for x in range(243)] for y in range(popSize)]
     return population
 
 def checkFitness(individual):
@@ -41,7 +41,7 @@ def checkFitness(individual):
         sum += robot.points;
 
     #Find average number of points for simulations
-    avg = sum / numMoves;
+    avg = sum / numSimulations;
 
     #Return the average as a fitness score for the individual
     return avg;
@@ -53,13 +53,10 @@ def naturalSelection(numGens):
     random.seed(datetime.now())
 
     #First, generate population of initial candidate solutions
-    initPop = genInitialPopulation()
-    curGen = initPop
+    curGen = genInitialPopulation()
 
     #Now, perform the following steps for 1000 generations
     for i in range(numGens):
-        #Seed random number generator
-        random.seed(datetime.now())
 
         #Check the fitness of each individual in the current population
         fitnesses = findAllFitnesses(curGen)
@@ -70,11 +67,10 @@ def naturalSelection(numGens):
         #Give each child a chance to mutate
         randomlyMutate(nextGen)
 
-        #Find the best candidate from the current generation
+        #Print the best candidate's fitness from the current gen
         bestCurCandidate = findBestCandidate(curGen)
-        #Find fitness
         print str(i) + ' : ' + str(checkFitness(bestCurCandidate))
-        print str(bestCurCandidate)
+        # print str(bestCurCandidate)
 
         #Make the current generation the next generation (i.e. move to the next generation and repeat)
         curGen = nextGen
@@ -104,6 +100,8 @@ def findAllFitnesses(population):
 def mateParents(population, fitnesses):
     #Given a population of solution candidates, and an array of their fitnesses, probabalistically mate parents and produce offspring
     #Return populiation of offspring (as array of solution candidates), of same size as initial population
+    #TODO: Need to work on this. Need to make sure crossover is happening properly, and also need to speed this function up
+    #TODO: This function is the dominating area of time loss within the program
 
     #Find size of population
     initPopSize = len(population)
@@ -124,7 +122,6 @@ def mateParents(population, fitnesses):
     return offspring
 
 def findParents(population, fitnesses, popSize):
-    #TODO: Look into this function
     #Find two parents to mate using k-way tournament selection (k = 10)
     parents = []
     #Find first parent
@@ -151,7 +148,6 @@ def findParents(population, fitnesses, popSize):
     return parents
 
 def getChildren(parents):
-    #TODO: Look into this function
     #Given a pair of parents, generate and return two children
     children = []
     splicePoint = random.randint(100,180)
@@ -192,8 +188,8 @@ def randomlyMutate(population):
 
     #Loop over all individuals
     for individual in population:
-        #Each individual has a 10% chance of mutating
-        if(random.randint(1,10) == 1):
+        #Each individual has a 1/12 chance of mutating
+        if(random.randint(1,12) == 1):
             #Mutate the individual. Choose two random points in the individual's genome, and mutate all cells between them
             start = random.randint(0,121)
             end = random.randint(122,242)
