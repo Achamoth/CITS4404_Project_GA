@@ -21,7 +21,7 @@ def checkFitness(individual):
     #Given an individual, check its fitness and return the value
     sum = 0 #sum of all points accrued over all simulations using strategy
     numMoves = 200 #Number of moves to simulate
-    numSimulations = 5 #Number of simulations per individual
+    numSimulations = 10 #Number of simulations per individual
 
     #Run simulations using the strategy (individual)
     for i in range(numSimulations):
@@ -58,11 +58,8 @@ def naturalSelection(numGens):
     #Now, perform the following steps for 1000 generations
     for i in range(numGens):
 
-        #Check the fitness of each individual in the current population
-        fitnesses = findAllFitnesses(curGen)
-
         #Mate pairs of individuals probabalistically based on fitnesses to produce offspring
-        nextGen = mateParents(curGen, fitnesses)
+        nextGen = mateParents(curGen)
 
         #Give each child a chance to mutate
         randomlyMutate(nextGen)
@@ -97,58 +94,48 @@ def findAllFitnesses(population):
     #Return array of fitnesses
     return fitnesses
 
-def mateParents(population, fitnesses):
+def mateParents(population):
     #Given a population of solution candidates, and an array of their fitnesses, probabalistically mate parents and produce offspring
     #Return populiation of offspring (as array of solution candidates), of same size as initial population
-    #TODO: Need to work on this. Need to make sure crossover is happening properly, and also need to speed this function up
-    #TODO: This function is the dominating area of time loss within the program
 
     #Find size of population
     initPopSize = len(population)
 
-    #Create population of empty offspring
+    #Create empty child population
     offspring = [[0 for y in range(243)] for x in range(initPopSize)]
 
     #Probabalistically mate parents based on fitness until a full population of offspring is produced. Use 10-way tournament selection
     numOffspring = 0
     while(numOffspring < initPopSize):
-        parents = findParents(population, fitnesses, initPopSize)
+        parents = []
+        parents.append(findParent(population, initPopSize))
+        parents.append(findParent(population, initPopSize))
         curOffspring = getChildren(parents)
         offspring[numOffspring] = curOffspring[0]
         offspring[numOffspring+1] = curOffspring[1]
+        #TODO: Can add in a check for fitness on offspring here to determine whether or not to add them
         numOffspring += 2
 
     #Return population of offspring
     return offspring
 
-def findParents(population, fitnesses, popSize):
-    #Find two parents to mate using k-way tournament selection (k = 10)
-    parents = []
-    #Find first parent
-    competingIndividualsIndexes = findUniqueRandomNumbers(0, popSize-1, 10)
-    competingIndividuals = []
-    for curIndex in competingIndividualsIndexes:
-        curIndividual = population[curIndex]
-        competingIndividuals.append(curIndividual)
-    parent1 = findBestCandidate(competingIndividuals)
-
-    #Find second parent
-    parent2 = parent1
-    while(parent2 == parent1):
-        competingIndividualsIndexes = findUniqueRandomNumbers(0, popSize-1, 10)
-        competingIndividuals = []
-        for curIndex in competingIndividualsIndexes:
-            curIndividual = population[curIndex]
-            competingIndividuals.append(curIndividual)
-        parent2 = findBestCandidate(competingIndividuals)
-
-    #Return the two parents
-    parents.append(parent1)
-    parents.append(parent2)
-    return parents
+def findParent(population, popSize):
+    #Find parent for generating offspring using k-way tournament selection
+    #TODO: Experiment with different values of k
+    best = []
+    bestFitness = -20000
+    k = 5 #5-way tournament selection
+    for i in range(k):
+        ind = population[random.randint(0,popSize-1)]
+        curFitness = checkFitness(ind)
+        if(curFitness > bestFitness):
+            best = ind
+            bestFitness = curFitness
+    return best
 
 def getChildren(parents):
     #Given a pair of parents, generate and return two children
+    #TODO: Experiment with different variants of this function
     children = []
     splicePoint = random.randint(100,180)
     #Get 0-slicePoint chunk from first parent
@@ -168,20 +155,6 @@ def getChildren(parents):
 
     #Return children
     return children
-
-def findUniqueRandomNumbers(lowest, largest, num):
-    #Find 'num' unique random numbers between 'lowest' and 'largest'
-    randSet = []
-    numFound = 0
-    while numFound < num:
-        curRand = random.randint(lowest, largest)
-        if(curRand in randSet):
-            continue
-        else:
-            randSet.append(curRand)
-            numFound += 1
-    #Return list of random numbers found
-    return randSet
 
 def randomlyMutate(population):
     #Given a population of individuals, randomly mutate the individuals
