@@ -13,7 +13,7 @@ def setSituations(sitFromRunner):
 
 def genInitialPopulation():
     #Generate the initial population of solution candidates randomly
-    popSize = 150
+    popSize = 200
     population = [[random.randint(0,6) for x in range(243)] for y in range(popSize)]
     return population
 
@@ -21,7 +21,7 @@ def checkFitness(individual):
     #Given an individual, check its fitness and return the value
     sum = 0 #sum of all points accrued over all simulations using strategy
     numMoves = 200 #Number of moves to simulate
-    numSimulations = 10 #Number of simulations per individual
+    numSimulations = 50 #Number of simulations per individual
 
     #Run simulations using the strategy (individual)
     for i in range(numSimulations):
@@ -58,25 +58,29 @@ def naturalSelection(numGens):
     #Now, perform the following steps for 1000 generations
     for i in range(numGens):
 
+        #Check all individuals in population for fitness
+        fitnesses = findAllFitnesses(curGen)
+
         #Mate pairs of individuals probabalistically based on fitnesses to produce offspring
-        nextGen = mateParents(curGen)
+        nextGen = mateParents(curGen, fitnesses)
 
         #Give each child a chance to mutate
         randomlyMutate(nextGen)
 
         #Print the best candidate's fitness from the current gen
-        bestCurCandidate = findBestCandidate(curGen)
-        print str(i) + ' : ' + str(checkFitness(bestCurCandidate))
+        bestCurCandidate = findBestCandidate(curGen, fitnesses)
+        print str(i) + ' : ' + str(fitnesses[i])
         # print str(bestCurCandidate)
 
         #Make the current generation the next generation (i.e. move to the next generation and repeat)
         curGen = nextGen
 
     #In the last generation, find the individual with the highest fitness
-    bestCandidate = findBestCandidate(curGen)
+    finalFitnesses = findAllFitnesses(curGen)
+    bestCandidate = findBestCandidate(curGen, finalFitnesses)
 
     #Return the best candidate as the final solution
-    return bestCandidate
+    return curGen[bestCandidate]
 
 def findAllFitnesses(population):
     #Given a population of individuals (array), return an array containing all fitnesses, with consistent index positioning
@@ -94,7 +98,7 @@ def findAllFitnesses(population):
     #Return array of fitnesses
     return fitnesses
 
-def mateParents(population):
+def mateParents(population, fitnesses):
     #Given a population of solution candidates, and an array of their fitnesses, probabalistically mate parents and produce offspring
     #Return populiation of offspring (as array of solution candidates), of same size as initial population
 
@@ -108,8 +112,8 @@ def mateParents(population):
     numOffspring = 0
     while(numOffspring < initPopSize):
         parents = []
-        parents.append(findParent(population, initPopSize))
-        parents.append(findParent(population, initPopSize))
+        parents.append(findParent(population, initPopSize, fitnesses))
+        parents.append(findParent(population, initPopSize, fitnesses))
         curOffspring = getChildren(parents)
         offspring[numOffspring] = curOffspring[0]
         offspring[numOffspring+1] = curOffspring[1]
@@ -119,15 +123,15 @@ def mateParents(population):
     #Return population of offspring
     return offspring
 
-def findParent(population, popSize):
+def findParent(population, popSize, fitnesses):
     #Find parent for generating offspring using k-way tournament selection
-    #TODO: Experiment with different values of k
-    best = []
-    bestFitness = -20000
-    k = 5 #5-way tournament selection
+    best = population[0]
+    bestFitness = fitnesses[0]
+    k = 5 #TODO: Try experimenting with different values of k
     for i in range(k):
-        ind = population[random.randint(0,popSize-1)]
-        curFitness = checkFitness(ind)
+        curRand = random.randint(0, popSize-1)
+        ind = population[curRand]
+        curFitness = fitnesses[curRand]
         if(curFitness > bestFitness):
             best = ind
             bestFitness = curFitness
@@ -137,14 +141,15 @@ def getChildren(parents):
     #Given a pair of parents, generate and return two children
     #TODO: Experiment with different variants of this function
     children = []
-    splicePoint = random.randint(100,180)
-    #Get 0-slicePoint chunk from first parent
+    splicePoint = random.randint(1,240)
+    # splicePoint = 242/2 #TODO: Experiment with different values
+    #Get 0-splicePoint chunk from first parent
     parent1FirstChunk = (parents[0])[0:splicePoint]
-    #Get slicePoint-242 chunk from first parent
+    #Get splicePoint-242 chunk from first parent
     parent1SecondChunk = (parents[0])[splicePoint:len(parents[0])]
-    #Get 0-slicePoint chunk from second parent
+    #Get 0-splicePoint chunk from second parent
     parent2FirstChunk = (parents[1])[0:splicePoint]
-    #Get slicePoint-242 chunk from second parent
+    #Get splicePoint-242 chunk from second parent
     parent2SecondChunk = (parents[1])[splicePoint:len(parents[1])]
 
     #Create children
@@ -158,6 +163,7 @@ def getChildren(parents):
 
 def randomlyMutate(population):
     #Given a population of individuals, randomly mutate the individuals
+    #TODO: Experiment with different variants of this function
 
     #Loop over all individuals
     for individual in population:
@@ -173,14 +179,14 @@ def randomlyMutate(population):
             #Don't mutate the individual
             continue
 
-def findBestCandidate(population):
+def findBestCandidate(population, fitnesses):
     #Given a population, return the individual with the highest fitness
-    bestFitness = -1000
-    bestCandidate = []
-    for individual in population:
-        curFitness = checkFitness(individual)
+    bestFitness = fitnesses[0]
+    bestCandidate = 0
+    for i in range(1,len(population)-1):
+        curFitness = fitnesses[i]
         if (curFitness >= bestFitness):
             bestFitness = curFitness
-            bestCandidate = individual
+            bestCandidate = i
     #Return best candidate
     return bestCandidate
