@@ -21,7 +21,7 @@ def checkFitness(individual):
     #Given an individual, check its fitness and return the value
     sum = 0 #sum of all points accrued over all simulations using strategy
     numMoves = 200 #Number of moves to simulate
-    numSimulations = 50 #Number of simulations per individual
+    numSimulations = 15 #Number of simulations per individual
 
     #Run simulations using the strategy (individual)
     for i in range(numSimulations):
@@ -127,7 +127,7 @@ def findParent(population, popSize, fitnesses):
     #Find parent for generating offspring using k-way tournament selection
     best = population[0]
     bestFitness = fitnesses[0]
-    k = 5 #TODO: Try experimenting with different values of k
+    k = 15 #TODO: Try experimenting with different values of k
     for i in range(k):
         curRand = random.randint(0, popSize-1)
         ind = population[curRand]
@@ -167,14 +167,16 @@ def randomlyMutate(population):
 
     #Loop over all individuals
     for individual in population:
-        #Each individual has a 1/12 chance of mutating
-        if(random.randint(1,12) == 1):
-            #Mutate the individual. Choose two random points in the individual's genome, and mutate all cells between them
-            start = random.randint(0,121)
-            end = random.randint(122,242)
-            for i in range(start, end):
-                #Randomize this element of the genome
-                individual[i] = random.randint(0,6)
+        #Each individual has a 1/6 chance of mutating
+        if(random.randint(1,6) == 1):
+            #Mutate the individual. Choose a random point in the individual's genome, and mutate it
+            point = random.randint(0,242)
+            individual[point] = random.randint(0,6)
+            # start = random.randint(0,121)
+            # end = random.randint(122,242)
+            # for i in range(start, end):
+            #     #Randomize this element of the genome
+            #     individual[i] = random.randint(0,6)
         else:
             #Don't mutate the individual
             continue
