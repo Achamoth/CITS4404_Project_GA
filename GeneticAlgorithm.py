@@ -14,7 +14,7 @@ def setSituations(sitFromRunner):
 def genInitialPopulation():
     #Generate the initial population of solution candidates randomly
     popSize = 200
-    population = [[random.randint(0,6) for x in range(243)] for y in range(popSize)]
+    population = [[random.randint(0,5) for x in range(243)] for y in range(popSize)]
     return population
 
 def checkFitness(individual):
@@ -57,7 +57,6 @@ def naturalSelection(numGens):
 
     #Now, perform the following steps for 1000 generations
     for i in range(numGens):
-
         #Check all individuals in population for fitness
         fitnesses = findAllFitnesses(curGen)
 
@@ -69,8 +68,8 @@ def naturalSelection(numGens):
 
         #Print the best candidate's fitness from the current gen
         bestCurCandidate = findBestCandidate(curGen, fitnesses)
-        print str(i) + ' : ' + str(fitnesses[i])
-        # print str(bestCurCandidate)
+        print str(i) + ' : ' + str(fitnesses[bestCurCandidate])
+        #print str(bestCurCandidate)
 
         #Make the current generation the next generation (i.e. move to the next generation and repeat)
         curGen = nextGen
@@ -89,11 +88,9 @@ def findAllFitnesses(population):
     fitnesses = [0 for x in range(len(population))]
 
     #For each individual, find its fitness, and store it in the array
-    j=0
     for i in range(len(population)):
         curFitness = checkFitness(population[i])
-        fitnesses[j] = curFitness
-        j += 1
+        fitnesses[i] = curFitness
 
     #Return array of fitnesses
     return fitnesses
@@ -106,7 +103,7 @@ def mateParents(population, fitnesses):
     initPopSize = len(population)
 
     #Create empty child population
-    offspring = [[0 for y in range(243)] for x in range(initPopSize)]
+    offspring = [[0 for x in range(243)] for y in range(initPopSize)]
 
     #Probabalistically mate parents based on fitness until a full population of offspring is produced. Use 10-way tournament selection
     numOffspring = 0

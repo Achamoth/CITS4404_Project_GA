@@ -10,8 +10,12 @@ situations = FileOps.readSituations('Situations.txt')
 #Set situations for genetic algorithm
 GeneticAlgorithm.setSituations(situations)
 
+#Hand coded solution (tends to get about 150 points when run over 200 actions)
+#solution = [3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,1,5,1,1,5,1,1,5,1,1,5,1,2,5,2,2,5,2,2,5,2,1,5,1,1,5,1,1,5,1,3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,5,5,5]
+
 #Find best solution over 1000 generations
 solution = GeneticAlgorithm.naturalSelection(1000)
+print(len(solution))
 
 #Test solution by running it on 200 actions with a robot in a random room, 100 times over, and finding average number of points
 sum = 0
