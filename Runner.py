@@ -15,7 +15,6 @@ GeneticAlgorithm.setSituations(situations)
 
 #Find best solution over 1000 generations
 solution = GeneticAlgorithm.naturalSelection(1000)
-print(len(solution))
 
 #Test solution by running it on 200 actions with a robot in a random room, 100 times over, and finding average number of points
 sum = 0

@@ -77,6 +77,7 @@ def naturalSelection(numGens):
     #In the last generation, find the individual with the highest fitness
     finalFitnesses = findAllFitnesses(curGen)
     bestCandidate = findBestCandidate(curGen, finalFitnesses)
+    print str(1000) + ' : ' + str(finalFitnesses[bestCandidate])
 
     #Return the best candidate as the final solution
     return curGen[bestCandidate]
