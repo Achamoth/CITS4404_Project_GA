@@ -21,7 +21,7 @@ def checkFitness(individual):
     #Given an individual, check its fitness and return the value
     sum = 0 #sum of all points accrued over all simulations using strategy
     numMoves = 200 #Number of moves to simulate
-    numSimulations = 15 #Number of simulations per individual
+    numSimulations = 100 #Number of simulations per individual
 
     #Run simulations using the strategy (individual)
     for i in range(numSimulations):

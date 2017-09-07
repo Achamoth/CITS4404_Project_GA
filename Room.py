@@ -7,6 +7,7 @@ class Room(object):
 
     #2d array (10 by 10). 1 in any tile with a can, 0 in any empty tile
     cans = [ [ 0 for x in range(10) ] for y in range(10) ]
+    numCans = 0
 
     def __init__(self):
         #Spread cans around room randomly
@@ -14,11 +15,14 @@ class Room(object):
             for j in range(0, 9):
                 #50/50 chance of a tile having a can
                 self.cans[i][j] = random.randint(0, 1)
+                if self.cans[i][j] == 1:
+                    self.numCans += 1
 
     def pickUpCan(self, x, y):
         #If the specified coordinate has a can, remove it, and return true. Otherwise, return false
         if self.cans[x][y] == 1:
             self.cans[x][y] = 0
+            self.numCans -= 1
             return True
         else:
             return False
@@ -55,6 +59,10 @@ class Room(object):
             return 1
         else:
             return 0
+
+    def getNumCans(self):
+        #Return the number of cans present in the room
+        return self.numCans
 
     def printRoom(self):
         #Print the room as a string

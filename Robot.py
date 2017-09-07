@@ -15,8 +15,10 @@ class Robot(object):
     strategy = [ 0 for x in range(243)] #The strategy used by the robot. Elements represent actions for specific situations
 
     def __init__(self):
-        self.x = random.randint(0,9)
-        self.y = random.randint(0,9)
+        #self.x = random.randint(0,9)
+        #self.y = random.randint(0,9)
+        self.x = 0
+        self.y = 0
         self.points = 0
         self.moves = 0
 

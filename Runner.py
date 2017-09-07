@@ -12,26 +12,32 @@ GeneticAlgorithm.setSituations(situations)
 
 #Hand coded solution (tends to get about 150 points when run over 200 actions)
 #solution = [3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,1,5,1,1,5,1,1,5,1,1,5,1,2,5,2,2,5,2,2,5,2,1,5,1,1,5,1,1,5,1,3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,0,5,0,3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,1,5,1,3,5,3,3,5,3,2,5,2,2,5,2,2,5,2,2,5,2,3,5,3,3,5,3,5,5,5]
+#solution = [2,5,4,3,5,5,1,5,3,2,5,6,2,3,5,2,5,1,0,5,6,3,5,5,4,6,1,1,5,1,3,3,6,1,5,4,1,5,1,0,3,4,1,5,6,1,1,0,5,5,0,1,5,0,0,5,2,0,3,0,2,5,6,2,5,6,1,3,2,2,5,2,3,5,0,3,2,5,1,1,2,0,5,2,3,3,3,0,5,4,0,5,5,2,3,1,2,5,5,0,5,1,3,3,6,1,5,4,1,5,0,6,6,5,2,6,4,1,5,0,2,6,6,5,0,6,0,1,2,2,6,4,4,5,3,6,0,5,6,3,1,5,2,0,2,5,6,4,3,1,0,5,4,3,5,4,6,3,2,4,0,4,3,5,0,3,3,4,1,5,3,2,5,0,2,5,3,2,5,1,3,5,2,3,5,2,0,4,5,1,5,0,1,3,0,1,5,6,2,1,3,4,3,6,2,5,2,3,5,3,2,2,3,1,3,5,0,5,1,2,6,0,5,1,3,3,5,6,2,0,1,5,2,4,5,1,4,3,4,3,4,3,2]
+#solution = [3,6,2,6,5,1,0,6,5,2,5,3,2,5,2,0,2,6,6,0,4,3,4,1,5,2,2,1,5,1,1,5,3,2,2,3,2,1,2,2,5,0,0,5,6,3,2,3,0,4,6,4,6,4,0,3,4,5,2,1,6,0,5,0,2,0,6,4,5,1,1,0,6,4,4,4,5,0,6,3,0,0,5,2,0,6,5,6,0,0,2,5,1,2,5,2,2,2,4,3,2,5,4,4,4,6,2,2,1,1,1,6,5,0,1,2,2,1,2,3,0,5,2,0,5,0,3,2,4,4,4,2,1,2,3,0,0,0,3,1,5,2,0,5,2,3,6,5,0,5,5,0,3,3,4,6,0,5,0,3,2,2,1,5,1,1,5,1,2,6,4,1,5,3,2,5,4,6,3,4,3,2,1,3,1,6,6,5,2,1,1,5,6,5,3,2,5,2,6,1,4,3,2,3,1,1,0,1,0,3,6,2,0,1,2,6,2,3,0,2,3,0,0,5,5,3,5,3,2,5,5,5,4,5,3,3,5,2,0,2,0,4,4]
 
 #Find best solution over 1000 generations
-solution = GeneticAlgorithm.naturalSelection(1000)
+solution = GeneticAlgorithm.naturalSelection(3500)
 
-#Test solution by running it on 200 actions with a robot in a random room, 100 times over, and finding average number of points
+#Test solution by running it on 200 actions with a robot in a random room,100 times over,and finding average number of points
 sum = 0
+#canSum = 0
 for i in range(100):
     #Generate new room and robot
     robot = Robot.Robot()
     room = Room.Room()
+    #canSum += room.getNumCans()
     #Assign best solution to robot as its strategy
     robot.changeStrat(solution)
     for j in range(200):
         #Run 200 actions using strategy
-        robot.decide(room, situations)
+        robot.decide(room,situations)
     #Add number of points to cumulative sum
     sum += robot.points
 #Find average
 avg = sum / 100
+#canAvg = canSum/100
 
 #Print average
+#print 'Average Cans: ' + str(canAvg)
 print 'Average Points: ' + str(avg)
 print 'Strategy: ' + str(solution)
