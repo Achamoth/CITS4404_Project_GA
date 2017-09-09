@@ -21,7 +21,7 @@ def checkFitness(individual):
     #Given an individual, check its fitness and return the value
     sum = 0 #sum of all points accrued over all simulations using strategy
     numMoves = 200 #Number of moves to simulate
-    numSimulations = 100 #Number of simulations per individual
+    numSimulations = 15 #Number of simulations per individual
 
     #Run simulations using the strategy (individual)
     for i in range(numSimulations):
@@ -77,7 +77,7 @@ def naturalSelection(numGens):
     #In the last generation, find the individual with the highest fitness
     finalFitnesses = findAllFitnesses(curGen)
     bestCandidate = findBestCandidate(curGen, finalFitnesses)
-    print str(1000) + ' : ' + str(finalFitnesses[bestCandidate])
+    print str(numGens) + ' : ' + str(finalFitnesses[bestCandidate])
 
     #Return the best candidate as the final solution
     return curGen[bestCandidate]

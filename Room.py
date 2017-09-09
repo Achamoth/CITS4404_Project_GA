@@ -11,8 +11,8 @@ class Room(object):
 
     def __init__(self):
         #Spread cans around room randomly
-        for i in range(0, 9):
-            for j in range(0, 9):
+        for i in range(0, 10):
+            for j in range(0, 10):
                 #50/50 chance of a tile having a can
                 self.cans[i][j] = random.randint(0, 1)
                 if self.cans[i][j] == 1:
