@@ -4,6 +4,7 @@ import Robot
 import Room
 import random
 from datetime import datetime
+from multiprocessing import Pool
 
 situations = {};
 
@@ -55,10 +56,13 @@ def naturalSelection(numGens):
     #First, generate population of initial candidate solutions
     curGen = genInitialPopulation()
 
+    #Create pool of worker processes
+    pool = Pool(processes=4)
+
     #Now, perform the following steps for 1000 generations
     for i in range(numGens):
         #Check all individuals in population for fitness
-        fitnesses = findAllFitnesses(curGen)
+        fitnesses = findAllFitnesses(curGen, pool)
 
         #Mate pairs of individuals probabalistically based on fitnesses to produce offspring
         nextGen = mateParents(curGen, fitnesses)
@@ -82,16 +86,19 @@ def naturalSelection(numGens):
     #Return the best candidate as the final solution
     return curGen[bestCandidate]
 
-def findAllFitnesses(population):
+def findAllFitnesses(population, pool):
     #Given a population of individuals (array), return an array containing all fitnesses, with consistent index positioning
 
     #Create empty array of fitnesses
-    fitnesses = [0 for x in range(len(population))]
+    # fitnesses = [0 for x in range(len(population))]
 
     #For each individual, find its fitness, and store it in the array
-    for i in range(len(population)):
-        curFitness = checkFitness(population[i])
-        fitnesses[i] = curFitness
+    # for i in range(len(population)):
+    #     curFitness = checkFitness(population[i])
+    #     fitnesses[i] = curFitness
+
+    fitnesses = pool.map(checkFitness,population)
+
 
     #Return array of fitnesses
     return fitnesses
