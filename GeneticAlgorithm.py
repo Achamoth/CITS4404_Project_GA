@@ -79,7 +79,7 @@ def naturalSelection(numGens):
         curGen = nextGen
 
     #In the last generation, find the individual with the highest fitness
-    finalFitnesses = findAllFitnesses(curGen)
+    finalFitnesses = findAllFitnesses(curGen, pool)
     bestCandidate = findBestCandidate(curGen, finalFitnesses)
     print str(numGens) + ' : ' + str(finalFitnesses[bestCandidate])
 
