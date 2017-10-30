@@ -8,7 +8,7 @@ import time
 
 # canAvg, avg, cansPickedUpAvg
 # From Ammar's Runner.py
-def testSolution(solution):
+def testSolution(situations, solution):
     sum = 0
     canSum = 0
     cansPickedUpSum = 0
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         generations = 1001  # So that 1000 gets printed
 
         def gen_callback(i, fitnesses, curGen, nextGen, bestCurCandidate):
-            canAvg, avg, cansPickedUpAvg = testSolution(curGen[bestCurCandidate])
+            canAvg, avg, cansPickedUpAvg = testSolution(situations, curGen[bestCurCandidate])
             printBoth('{}\t{}\t{}\t{}\t{}\t{}'.format(k, i, fitnesses[bestCurCandidate], canAvg, avg, cansPickedUpAvg))
             f.flush()
 

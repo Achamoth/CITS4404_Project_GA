@@ -3,9 +3,11 @@
 
 #IntelliJ IDEA
 .idea
+/java/out/
 
 #Java compiled
 .class
 
 # Output
 /parentselection.csv
+/parentselectionother.csv
