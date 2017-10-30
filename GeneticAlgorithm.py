@@ -76,6 +76,10 @@ def naturalSelection(numGens):
         print str(i) + ' : ' + str(fitnesses[bestCurCandidate])
         #print str(bestCurCandidate)
 
+        if callable(GAConstants.generation_callback):
+            GAConstants.generation_callback(i, fitnesses, curGen, nextGen, bestCurCandidate)
+
+
         #Make the current generation the next generation (i.e. move to the next generation and repeat)
         curGen = nextGen
 
@@ -89,19 +93,19 @@ def naturalSelection(numGens):
 
 def findAllFitnesses(population, pool):
     # Given a population of individuals (array), return an array containing all fitnesses, with consistent index positioning
-    # if os.name == "nt": # Windows pool.map doesn't work for some reason
-    #     # Create empty array of fitnesses
-    #     fitnesses = [0 for x in range(len(population))]
-    #
-    #     # For each individual, find its fitness, and store it in the array
-    #     for i in range(len(population)):
-    #         curFitness = checkFitness(population[i])
-    #         fitnesses[i] = curFitness
-    #
-    #     # Return array of fitnesses
-    #     return fitnesses
-    # else:
-    return pool.map(checkFitness, population)
+    if os.name == "nt": # Windows pool.map doesn't work for some reason
+        # Create empty array of fitnesses
+        fitnesses = [0 for x in range(len(population))]
+
+        # For each individual, find its fitness, and store it in the array
+        for i in range(len(population)):
+            curFitness = checkFitness(population[i])
+            fitnesses[i] = curFitness
+
+        # Return array of fitnesses
+        return fitnesses
+    else:
+        return pool.map(checkFitness, population)
 
 
 
@@ -136,7 +140,7 @@ def findParent(population, popSize, fitnesses):
     best = population[0]
     bestFitness = fitnesses[0]
     # k = 15 #TODO: Try experimenting with different values of k
-    k = GAConstants.getK()
+    k = GAConstants.k
     for i in range(k):
         curRand = random.randint(0, popSize-1)
         ind = population[curRand]

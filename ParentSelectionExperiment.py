@@ -13,44 +13,19 @@ if __name__ == '__main__':
     # Set situations for genetic algorithm
     GeneticAlgorithm.setSituations(situations)
 
-    bestK = -1
-    bestKPoints = 0
     f = open('parentselection.csv', 'a')
     f.write(time.strftime("START_%Y-%m-%d_%H:%M\n"))
-    f.write('K\tCans\tPoints\tStrategy\n')
+    f.write('K\tGen\tBest Points\n')
 
     for k in range(1, 51):
-        GAConstants.setK(k)
+        GAConstants.k = k
 
-        # Find best solution over 1000 generations
-        solution = GeneticAlgorithm.naturalSelection(1000)
+        def gen_callback(i, fitnesses, curGen, nextGen, bestCurCandidate):
+            print('{}\t{}\t{}'.format(k, i, fitnesses[bestCurCandidate]))
+            f.write('{}\t{}\t{}\n'.format(k, i, fitnesses[bestCurCandidate]))
 
-        # Test solution by running it on 200 actions with a robot in a random room,100 times over,and finding average number of points
-        sum = 0
-        canSum = 0
-        for i in range(100):
-            # Generate new room and robot
-            robot = Robot.Robot()
-            room = Room.Room()
-            canSum += room.getNumCans()
-            # Assign best solution to robot as its strategy
-            robot.changeStrat(solution)
-            for j in range(200):
-                # Run 200 actions using strategy
-                robot.decide(room, situations)
-            # Add number of points to cumulative sum
-            sum += robot.points
-        # Find average
-        avg = sum / 100
-        canAvg = canSum / 100
+        GAConstants.generation_callback = gen_callback
 
-        # Update Best
-        if avg > bestKPoints:
-            bestK = k
-            bestKPoints = avg
-
-        # Log Result
-        print('{}\t{}\t{}\t{}\n'.format(k, canAvg, avg, solution))
-        f.write('{}\t{}\t{}\t{}\n'.format(k, canAvg, avg, solution))
-
+        solution = GeneticAlgorithm.naturalSelection(1001)
+        f.flush()
     f.close()
