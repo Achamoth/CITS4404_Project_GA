@@ -1,10 +1,11 @@
 # Author : Ammar Abu Shamleh
-
+import GAConstants
 import Robot
 import Room
 import random
 from datetime import datetime
 from multiprocessing import Pool
+import os
 
 situations = {};
 
@@ -79,7 +80,7 @@ def naturalSelection(numGens):
         curGen = nextGen
 
     #In the last generation, find the individual with the highest fitness
-    finalFitnesses = findAllFitnesses(curGen)
+    finalFitnesses = findAllFitnesses(curGen, pool)
     bestCandidate = findBestCandidate(curGen, finalFitnesses)
     print str(numGens) + ' : ' + str(finalFitnesses[bestCandidate])
 
@@ -87,21 +88,23 @@ def naturalSelection(numGens):
     return curGen[bestCandidate]
 
 def findAllFitnesses(population, pool):
-    #Given a population of individuals (array), return an array containing all fitnesses, with consistent index positioning
+    # Given a population of individuals (array), return an array containing all fitnesses, with consistent index positioning
+    # if os.name == "nt": # Windows pool.map doesn't work for some reason
+    #     # Create empty array of fitnesses
+    #     fitnesses = [0 for x in range(len(population))]
+    #
+    #     # For each individual, find its fitness, and store it in the array
+    #     for i in range(len(population)):
+    #         curFitness = checkFitness(population[i])
+    #         fitnesses[i] = curFitness
+    #
+    #     # Return array of fitnesses
+    #     return fitnesses
+    # else:
+    return pool.map(checkFitness, population)
 
-    #Create empty array of fitnesses
-    # fitnesses = [0 for x in range(len(population))]
-
-    #For each individual, find its fitness, and store it in the array
-    # for i in range(len(population)):
-    #     curFitness = checkFitness(population[i])
-    #     fitnesses[i] = curFitness
-
-    fitnesses = pool.map(checkFitness,population)
 
 
-    #Return array of fitnesses
-    return fitnesses
 
 def mateParents(population, fitnesses):
     #Given a population of solution candidates, and an array of their fitnesses, probabalistically mate parents and produce offspring
@@ -132,7 +135,8 @@ def findParent(population, popSize, fitnesses):
     #Find parent for generating offspring using k-way tournament selection
     best = population[0]
     bestFitness = fitnesses[0]
-    k = 15 #TODO: Try experimenting with different values of k
+    # k = 15 #TODO: Try experimenting with different values of k
+    k = GAConstants.getK()
     for i in range(k):
         curRand = random.randint(0, popSize-1)
         ind = population[curRand]
