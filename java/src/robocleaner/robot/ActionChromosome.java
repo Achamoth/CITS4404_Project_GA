@@ -50,4 +50,11 @@ public class ActionChromosome extends AbstractChromosome<IActionGene> {
     public IAction[] getActionArray() {
         return this._genes.stream().map((iag -> iag.getAllele())).toArray((len) -> new IAction[len]);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder build = new StringBuilder();
+        this._genes.stream().forEach((gene) -> build.append(gene.getAllele().getSymbol()));
+        return build.toString();
+    }
 }

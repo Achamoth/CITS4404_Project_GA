@@ -9,7 +9,8 @@ package robocleaner;
  */
 public final class RoboConstants {
     private RoboConstants(){}
-    public static final int POINTS_WALL_BUMP = -10;
-    public static final int POINTS_NON_COLLECTABLE = -10;
+    public static final int POINTS_WALL_BUMP = -5;
+    public static final int POINTS_NON_COLLECTABLE = -1;
+    public static final int POINTS_COLLECTABLE = 10;
 
 }

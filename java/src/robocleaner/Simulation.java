@@ -36,7 +36,7 @@ public class Simulation {
             .collect(Collectors.toSet());
     static Set<IAction> actionSet = new TreeSet<IAction>(Arrays.stream(new IAction[]{
             ActionUp.instance, ActionDown.instance, ActionLeft.instance, ActionRight.instance,
-            ActionPickUp.instance, ActionRandom.instance
+            ActionPickUp.instance, ActionRandom.instance, ActionNothing.instance
     }).collect(Collectors.toSet()));
     static IAction[] actions = actionSet.toArray(new IAction[0]);
 
@@ -45,18 +45,39 @@ public class Simulation {
     public Simulation(){}
 
     // 2.) Definition of the fitness function.
-    private static int eval(Genotype<IActionGene> gt) {
-        Room rm = Room.make(10, 10, tileSet, TileWall.instance, (r, c) ->
-                rand.nextDouble() < 0.5 ? TileCan.instance : TileEmpty.instance
-        );
+    private static double eval(Genotype<IActionGene> gt) {
+
         ActionChromosome chroma = gt.getChromosome()
                 .as(ActionChromosome.class);
         //Create robot
-        GeneRobot robot = new GeneRobot(actionSet, rm, view, rand.nextInt(rm.getRows()), rand.nextInt(rm.getColumns()));
-        robot.loadGene(chroma.getActionArray());
-        for(int i = 0; i < 200; i++)
-            robot.getAction().perform(rand, rm, robot);
-        return robot.getPoints();
+        int totalPoints = 0;
+        int iterations = 15;
+        for(int j = 0; j < iterations; j++) {
+            Room rm = Room.make(10, 10, tileSet, TileWall.instance, (r, c) ->
+                    rand.nextDouble() < 0.5 ? TileCan.instance : TileEmpty.instance
+            );
+            //System.out.println(rm.toString());
+            GeneRobot robot = new GeneRobot(actionSet, rm, view, rand.nextInt(rm.getRows()), rand.nextInt(rm.getColumns()));
+            robot.loadGene(chroma.getActionArray());
+            robot.resetPoints();
+            for(int i = 0; i < 200; i++) {
+                robot.getAction().perform(rand, rm, robot);
+            }
+
+            totalPoints += robot.getPoints();
+            if(robot.getPoints() > 0) {
+                System.out.println("YAY");
+            }
+        }
+
+        double average = totalPoints * 1.0 / iterations;
+
+        if(average > 0) {
+            System.out.println("YAYZOR");
+        }
+        //System.out.println(average);
+
+        return average;
     }
 
     private static boolean validator(Genotype<IActionGene> gt) {
@@ -79,24 +100,33 @@ public class Simulation {
                 Genotype.of(new ActionChromosome(actions, geneLength));
 
         // 3.) Create the execution environment.
-        Engine<IActionGene, Integer> engine = Engine
+        Engine<IActionGene, Double> engine = Engine
                 .builder(Simulation::eval, gtf)
                 .maximizing()
-                .optimize(Optimize.MAXIMUM)
-                .selector(new TournamentSelector<>(3))
-                .alterers(
-                        new UniformCrossover<>(0.5),
-                        new Mutator<>(0.15)
-                )
-                .survivorsFraction(0.1)
-                .genotypeValidator(Simulation::validator)
+                .selector(new TournamentSelector<>(15))
+//                .alterers(
+//                        new UniformCrossover<>(0.5),
+//                        new Mutator<>(0.05)
+//                )
+//                .survivorsFraction(0.1)
+//                .genotypeValidator(Simulation::validator)
                 .populationSize(500)
                 .build();
 
         // 4.) Start the execution (evolution) and
         //     collect the result.
-        Genotype<IActionGene> result = engine.stream()
-                .limit(100)
+        Genotype<IActionGene> result = engine.stream().map((val) -> {
+//            System.out.println(eval(val.getBestPhenotype().getGenotype()) + ":" + val.getBestPhenotype().getGenotype().getChromosome()
+//                    .as(ActionChromosome.class)
+//                    .toString());
+            if(val.getGeneration() == 1) {
+                val.getGenotypes().stream().forEach((gt) -> {
+                    System.out.println(eval(gt) + ":" + gt.getChromosome());
+                });
+            }
+            return val;
+        })
+                .limit(1000)
                 .collect(EvolutionResult.toBestGenotype());
 
         System.out.println(result);
