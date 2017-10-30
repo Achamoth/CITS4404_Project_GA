@@ -70,5 +70,6 @@ if __name__ == '__main__':
 
         solution = GeneticAlgorithm.naturalSelection(generations)
         f.flush()
+    printBoth(time.strftime("FINISHED_%Y-%m-%d_%H:%M"))
     f.flush()
     f.close()

@@ -136,6 +136,9 @@ def mateParents(population, fitnesses):
     return offspring
 
 def findParent(population, popSize, fitnesses):
+    # Use alternative method if set
+    if callable(GAConstants.findParent):
+        return GAConstants.findParent(population, popSize, fitnesses)
     #Find parent for generating offspring using k-way tournament selection
     best = population[0]
     bestFitness = fitnesses[0]
