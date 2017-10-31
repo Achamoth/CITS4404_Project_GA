@@ -8,7 +8,7 @@ import time
 
 # canAvg, avg, cansPickedUpAvg
 # From Ammar's Runner.py
-def testSolution(situations, solution):
+def testSolution(solution):
     sum = 0
     canSum = 0
     cansPickedUpSum = 0
@@ -56,20 +56,23 @@ if __name__ == '__main__':
     printBoth(time.strftime("START_%Y-%m-%d_%H:%M"))
     printBoth('K\tGeneration\tBest Fitness\tCan Average\tPoint Avg\tCans Picked Up Average')
 
-    for k in range(1, 51):
-        GAConstants.k = k
+    # test_list = range(1, 51)
+    test_list = [2, 3, 5, 10, 15, 20, 50, 100, 150, 200]
 
-        generations = 1001  # So that 1000 gets printed
+    for k in test_list:
+        for r in range(1, 6):
+            GAConstants.k = k
 
-        def gen_callback(i, fitnesses, curGen, nextGen, bestCurCandidate):
-            canAvg, avg, cansPickedUpAvg = testSolution(situations, curGen[bestCurCandidate])
-            printBoth('{}\t{}\t{}\t{}\t{}\t{}'.format(k, i, fitnesses[bestCurCandidate], canAvg, avg, cansPickedUpAvg))
+            generations = 1001  # So that 1000 gets printed
+
+            def gen_callback(i, fitnesses, curGen, nextGen, bestCurCandidate):
+                canAvg, avg, cansPickedUpAvg = testSolution(curGen[bestCurCandidate])
+                printBoth('{}\t{}\t{}\t{}\t{}\t{}'.format(str(k) + '_' + str(r), i, fitnesses[bestCurCandidate], canAvg, avg, cansPickedUpAvg))
+                f.flush()
+
+            GAConstants.generation_callback = gen_callback
+
+            solution = GeneticAlgorithm.naturalSelection(generations)
             f.flush()
-
-        GAConstants.generation_callback = gen_callback
-
-        solution = GeneticAlgorithm.naturalSelection(generations)
-        f.flush()
-    printBoth(time.strftime("FINISHED_%Y-%m-%d_%H:%M"))
     f.flush()
     f.close()

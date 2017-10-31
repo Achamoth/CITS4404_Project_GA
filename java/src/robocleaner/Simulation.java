@@ -116,14 +116,14 @@ public class Simulation {
         // 4.) Start the execution (evolution) and
         //     collect the result.
         Genotype<IActionGene> result = engine.stream().map((val) -> {
-//            System.out.println(eval(val.getBestPhenotype().getGenotype()) + ":" + val.getBestPhenotype().getGenotype().getChromosome()
-//                    .as(ActionChromosome.class)
-//                    .toString());
-            if(val.getGeneration() == 1) {
-                val.getGenotypes().stream().forEach((gt) -> {
-                    System.out.println(eval(gt) + ":" + gt.getChromosome());
-                });
-            }
+            System.out.println(eval(val.getBestPhenotype().getGenotype()) + ":" + val.getBestPhenotype().getGenotype().getChromosome()
+                    .as(ActionChromosome.class)
+                    .toString());
+//            if(val.getGeneration() == 1) {
+//                val.getGenotypes().stream().forEach((gt) -> {
+//                    System.out.println(eval(gt) + ":" + gt.getChromosome());
+//                });
+//            }
             return val;
         })
                 .limit(1000)
