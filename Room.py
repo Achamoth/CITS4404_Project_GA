@@ -6,22 +6,21 @@ import sys
 class Room(object):
 
     #2d array (10 by 10). 1 in any tile with a can, 0 in any empty tile
-    cans = [ [ 0 for x in range(10) ] for y in range(10) ]
-    numCans = 0
-
-    def __init__(self):
-        #Spread cans around room randomly
-        for i in range(0, 10):
-            for j in range(0, 10):
-                #50/50 chance of a tile having a can
-                self.cans[i][j] = random.randint(0, 1)
-                if self.cans[i][j] == 1:
+    def __init__(self, width=10, height=10, chance=0.5):
+        self.width = width
+        self.height = height
+        self.cans = [[0 for _ in range(width)] for _ in range(height)]
+        self.numCans = 0
+        for j in range(0, height):
+            for i in range(0, width):
+                if random.random() < chance:
+                    self.cans[j][i] = 1
                     self.numCans += 1
 
     def pickUpCan(self, x, y):
         #If the specified coordinate has a can, remove it, and return true. Otherwise, return false
-        if self.cans[x][y] == 1:
-            self.cans[x][y] = 0
+        if self.cans[y][x] == 1:
+            self.cans[y][x] = 0
             self.numCans -= 1
             return True
         else:
@@ -29,7 +28,7 @@ class Room(object):
 
     def isWall(self, x, y):
         #If the specified coordinate is out of bounds (i.e. beyond a wall, or is a wall), return true. Otherwise return false
-        if x < 0 or x > 9 or y < 0 or y > 9:
+        if x < 0 or x >= self.width or y < 0 or y >= self.height:
             #Coordinate is a wall (or out of bounds)
             return True
         else:
@@ -55,7 +54,7 @@ class Room(object):
         #Given a coordinate tuple, return an encoding describing that tile (i.e. empty = 0, can = 1, wall = 2)
         if self.isWall(x, y):
             return 2
-        elif self.cans[x][y] == 1:
+        elif self.cans[y][x] == 1:
             return 1
         else:
             return 0
@@ -66,12 +65,15 @@ class Room(object):
 
     def printRoom(self):
         #Print the room as a string
-        for x in range(9):
-            for y in range(9):
-                if(self.cans[x][y] == 1):
+        for y in range(self.height):
+            for x in range(self.width):
+                if(self.cans[y][x] == 1):
                     sys.stdout.write('C ')
                 else:
                     sys.stdout.write('E ')
                 sys.stdout.flush()
             sys.stdout.write('\n')
             sys.stdout.flush()
+
+    def isCan(self, x, y):
+        return not self.isWall(x, y) and self.cans[y][x] == 1
