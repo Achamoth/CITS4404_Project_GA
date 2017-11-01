@@ -76,6 +76,9 @@ if __name__ == '__main__':
                       help="Frames per second of the simulation")
     args.add_argument("-p", "--pause", action='store_true',
                       help="If the simulation should start paused. SPACE to toggle pause.")
+    args.add_argument("-sc", "--scale", type=int, default=-1, required=False,
+                      help="How much to scale up the display."
+                           "Default is to scale it up to the largest possible power of two scale.")
     args = vars(args.parse_args())
 
     # Arguments
@@ -85,6 +88,7 @@ if __name__ == '__main__':
     solution = args["solution"]
     fps = args["fps"]
     paused = args["pause"]
+    scale = args["scale"]
     situations = FileOps.readSituations('Situations.txt')
 
     # Colours
@@ -109,11 +113,21 @@ if __name__ == '__main__':
     dh = display_info.current_h
 
     ww, wh = grid.draw_size()
-    while ww <= dw and wh <= dh:
-        ww *= 2
-        wh *= 2
-    ww = int(ww / 2)
-    wh = int(wh / 2)
+    if scale <= 0:
+        while ww <= dw and wh <= dh:
+            ww *= 2
+            wh *= 2
+        ww = int(ww / 2)
+        wh = int(wh / 2)
+    else:
+        ww *= scale
+        wh *= scale
+        while (ww > dw or wh > dh) and scale > 1:
+            ww /= scale
+            wh /= scale
+            scale -= 1
+            ww *= scale
+            wh *= scale
 
     screen = pygame.display.set_mode((ww, wh), screen_flags)
 

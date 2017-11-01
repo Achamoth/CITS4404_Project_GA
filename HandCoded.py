@@ -37,3 +37,23 @@ def getSolution(situations):
 
     #Return solution
     return solution
+
+
+def getSolutionFunc(situations, func):
+    # type: (Map[(int, int, int, int, int),int], Callable[[int, int, int, int, int], int]) -> List[int]
+    """Generates Solution List from a function that given the
+    (north, south, east, west, current) squares returns an action"""
+    #Create empty solution
+    solution = [0 for x in range(243)]
+
+    #Loop over all situations
+    for key in situations.keys():
+        north = int(key[0])
+        south = int(key[1])
+        east = int(key[2])
+        west = int(key[3])
+        current = int(key[4])
+
+        solution[situations[key]] = func(north, south, east, west, current)
+
+    return solution
