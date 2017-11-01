@@ -74,6 +74,8 @@ if __name__ == '__main__':
 
     args.add_argument("-f", "--fps", type=int, default=2, required=False,
                       help="Frames per second of the simulation")
+    args.add_argument("-p", "--pause", action='store_true',
+                      help="If the simulation should start paused. SPACE to toggle pause.")
     args = vars(args.parse_args())
 
     # Arguments
@@ -82,6 +84,7 @@ if __name__ == '__main__':
     can_chance = args["can_chance"]
     solution = args["solution"]
     fps = args["fps"]
+    paused = args["pause"]
     situations = FileOps.readSituations('Situations.txt')
 
     # Colours
@@ -163,7 +166,8 @@ if __name__ == '__main__':
                 screen = pygame.display.set_mode((event.w, event.h), screen_flags)
                 screen.fill(BLACK)
             elif event.type == KEYDOWN:
-                pass
+                if event.key == K_SPACE:
+                    paused = not paused
 
         # Render
         # Draw grid on the screen buffer
@@ -197,6 +201,9 @@ if __name__ == '__main__':
         pygame.display.flip()
 
         # Logic
+        # Skip logic if paused
+        if paused:
+            continue
         step += 1
         last_cans = room.numCans
         last_pos = (robot.x, robot.y)
