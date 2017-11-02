@@ -5,6 +5,7 @@ from pygame.locals import *
 from Room import Room
 from Grid import Grid
 from Robot import Robot
+from Facing import Facing
 import sys, math, pygame, FileOps, random
 
 
@@ -135,9 +136,14 @@ if __name__ == '__main__':
 
     # Render buffers
     screen_buffer = pygame.SurfaceType(grid.draw_size(), render_flags)
+    screen_buffer_rect = pygame.Rect((0, 0), screen_buffer.get_size())
     grid_buffer = pygame.SurfaceType(grid.draw_size(), render_flags)
     grid_buffer.fill(BLACK)
     grid.draw(grid_buffer, DARK_GRAY)
+    path_buffer = pygame.SurfaceType(grid.draw_size(), render_flags | SRCALPHA)
+    path_buffer.fill(CLEAR)
+    PATH_OVERLAY = (255, 240, 240, 255)
+    PATH_COLOUR = WHITE
 
     # Assets
     img_robot = pygame.image.load("assets/robot.png").convert_alpha()
@@ -165,6 +171,36 @@ if __name__ == '__main__':
     last_action = -1
     last_pos = (0, 0)
     cans = 0
+
+
+    # Robot has a marker on the back right
+    # Square is 7 by 7
+    # Facing Up -> (5, 5)
+    # Facing Down -> (1, 1)
+    # Facing Left -> (5, 1)
+    # Facing Right -> (1, 5)
+    # path_offsets = ((5, 5), (1, 1), (5, 1), (1, 5))
+    path_offsets = ((4, 4), (2, 2), (4, 2), (2, 4))
+    path_facing = Facing.UP
+
+
+    def updateFacing(facing, prev, curr):
+        if prev == curr:
+            return facing
+        if(curr[0] > prev[0]):  # Moved Right
+            return Facing.RIGHT
+        elif(curr[0] < prev[0]):
+            return Facing.LEFT
+        elif(curr[1] > prev[1]):
+            return Facing.DOWN
+        else:
+            return Facing.UP
+
+
+    def sumtup(a, b):
+        return tuple(map(sum, zip(a, b)))
+
+    path_last = sumtup(tuple(grid.cell_rect(last_pos)[:2]), path_offsets[Facing.UP.value])
 
     while True:
         clock.tick(fps)
@@ -208,6 +244,10 @@ if __name__ == '__main__':
             cell_temp.fill(LIGHT_BLUE, None, pygame.BLEND_RGB_MULT)
             screen_buffer.blit(cell_temp, grid.cell_rect(last_pos))
 
+        # Path
+        screen_buffer.blit(path_buffer, screen_buffer_rect)
+
+        # Draw Scaled Screen Buffer
         screen_size = screen.get_size()
         new_size = match_aspect_ratio(screen_buffer.get_size(), screen_size)
         new_position = tuple(int((screen_size[i] - new_size[i]) / 2) for i in [0, 1])
@@ -219,6 +259,32 @@ if __name__ == '__main__':
         if paused:
             continue
         step += 1
+
+        #Path Drawing only happens when the logic changes
+        if last_pos != (robot.x, robot.y):
+            last_pos_path = grid.cell_pos(last_pos)
+            # Fade away old values
+            path_buffer.fill(PATH_OVERLAY, special_flags=BLEND_RGBA_MULT)
+
+            new_facing = updateFacing(path_facing, last_pos, (robot.x, robot.y))
+            draw_anti = path_facing.rotateClockwise() == new_facing
+            while path_facing != new_facing:
+                next_facing = path_facing.rotateTowards(new_facing)
+                if(path_facing.rotateAnticlockwise() == next_facing):
+                    pygame.draw.line(path_buffer, PATH_COLOUR,
+                                      sumtup(last_pos_path, path_offsets[path_facing.value]),
+                                      sumtup(last_pos_path, path_offsets[next_facing.value]), 1)
+                path_facing = next_facing
+
+            if draw_anti:
+                path_last = sumtup(last_pos_path, path_offsets[path_facing.rotateAnticlockwise().value])
+            else:
+                path_last = sumtup(last_pos_path, path_offsets[path_facing.value])
+            path_new = sumtup(grid.cell_pos((robot.x, robot.y)), path_offsets[path_facing.value])
+
+            pygame.draw.line(path_buffer, PATH_COLOUR, path_last, path_new, 1)
+            path_last = path_new
+
         last_cans = room.numCans
         last_pos = (robot.x, robot.y)
         last_action = robot.decide(room, situations)

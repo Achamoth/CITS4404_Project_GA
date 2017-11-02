@@ -33,6 +33,7 @@ if __name__ == '__main__':
 
     # Hand coded solution
     # solution = HandCoded.getSolution(situations)
+    solution = HandCoded.getSolutionFunc(HandCoded.zen)
 
     # Find best solution over 1000 generations
     # solution = GeneticAlgorithm.naturalSelection(10000)
@@ -41,7 +42,8 @@ if __name__ == '__main__':
     sum = 0
     canSum = 0
     cansPickedUpSum = 0
-    for i in range(100):
+    iterations = 100
+    for i in range(iterations):
         # Generate new room and robot
         robot = Robot.Robot()
         room = Room.Room()
@@ -58,9 +60,9 @@ if __name__ == '__main__':
         cansPickedUp = cansBefore - room.getNumCans()
         cansPickedUpSum += cansPickedUp
     # Find average
-    avg = sum / 100
-    canAvg = canSum / 100
-    cansPickedUpAvg = cansPickedUpSum / 100
+    avg = sum / iterations
+    canAvg = canSum / iterations
+    cansPickedUpAvg = cansPickedUpSum / iterations
 
     # Print average
     print 'Average Cans: ' + str(canAvg)
