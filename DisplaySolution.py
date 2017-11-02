@@ -80,6 +80,8 @@ if __name__ == '__main__':
     args.add_argument("-sc", "--scale", type=int, default=-1, required=False,
                       help="How much to scale up the display."
                            "Default is to scale it up to the largest possible power of two scale.")
+    args.add_argument("-np", "--no-path", action='store_true',
+                      help="Disable path rendering")
     args = vars(args.parse_args())
 
     # Arguments
@@ -90,6 +92,7 @@ if __name__ == '__main__':
     fps = args["fps"]
     paused = args["pause"]
     scale = args["scale"]
+    no_path = args["no_path"]
     situations = FileOps.readSituations('Situations.txt')
 
     # Colours
@@ -142,7 +145,7 @@ if __name__ == '__main__':
     grid.draw(grid_buffer, DARK_GRAY)
     path_buffer = pygame.SurfaceType(grid.draw_size(), render_flags | SRCALPHA)
     path_buffer.fill(CLEAR)
-    PATH_OVERLAY = (255, 240, 240, 255)
+    PATH_OVERLAY = (240, 240, 255, 255)
     PATH_COLOUR = WHITE
 
     # Assets
@@ -245,7 +248,8 @@ if __name__ == '__main__':
             screen_buffer.blit(cell_temp, grid.cell_rect(last_pos))
 
         # Path
-        screen_buffer.blit(path_buffer, screen_buffer_rect)
+        if not no_path:
+            screen_buffer.blit(path_buffer, screen_buffer_rect)
 
         # Draw Scaled Screen Buffer
         screen_size = screen.get_size()
@@ -261,7 +265,7 @@ if __name__ == '__main__':
         step += 1
 
         #Path Drawing only happens when the logic changes
-        if last_pos != (robot.x, robot.y):
+        if not no_path and last_pos != (robot.x, robot.y):
             last_pos_path = grid.cell_pos(last_pos)
             # Fade away old values
             path_buffer.fill(PATH_OVERLAY, special_flags=BLEND_RGBA_MULT)
