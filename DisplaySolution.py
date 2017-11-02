@@ -42,9 +42,9 @@ if __name__ == '__main__':
                       help="Width of room")
     args.add_argument("-rh", "--room-height", type=int, default=10, required=False,
                       help="Height of room")
-    args.add_argument("-rx", "--robot-x", type=int, default=-1, required=False,
+    args.add_argument("-rx", "--robot-x", type=int, default=0, required=False,
                       help="Robot Starting Position X")
-    args.add_argument("-ry", "--robot-y", type=int, default=-1, required=False,
+    args.add_argument("-ry", "--robot-y", type=int, default=0, required=False,
                       help="Robot Starting Position Y")
     args.add_argument("-cc", "--can-chance", type=float, default=0.5, required=False,
                       help="Chance for a cell to contain a can")

@@ -1,6 +1,7 @@
 #Author: Ammar Abu Shamleh
 import Room
 import Robot
+import FileOps
 
 #Constants for describing a square's state
 EMPTY = 0
@@ -38,11 +39,42 @@ def getSolution(situations):
     #Return solution
     return solution
 
+def zen(north, south, east, west, current):
+    if current == CAN:
+        if north == CAN:
+            return MOVE_NORTH
+        elif west == CAN:
+            return MOVE_WEST
+        else:
+            return PICK_UP_CAN
 
-def getSolutionFunc(situations, func):
+    if north == CAN:
+        return MOVE_NORTH
+    if south == CAN:
+        return MOVE_SOUTH
+    if east == CAN:
+        return MOVE_EAST
+    if west == CAN:
+        return MOVE_WEST
+
+    if south == WALL:
+        return MOVE_EAST if not east == WALL else MOVE_NORTH
+    if east == WALL:
+        return MOVE_NORTH if not north == WALL else MOVE_WEST
+
+    if north == WALL:
+        return MOVE_WEST if not west == WALL else MOVE_SOUTH
+    if west == WALL:
+        return MOVE_EAST  # MOVE_SOUTH if not south == WALL else MOVE_EAST
+
+    return RANDOM
+
+def getSolutionFunc(func):
     # type: (Map[(int, int, int, int, int),int], Callable[[int, int, int, int, int], int]) -> List[int]
     """Generates Solution List from a function that given the
     (north, south, east, west, current) squares returns an action"""
+    situations = FileOps.readSituations('Situations.txt')
+
     #Create empty solution
     solution = [0 for x in range(243)]
 
@@ -53,7 +85,6 @@ def getSolutionFunc(situations, func):
         east = int(key[2])
         west = int(key[3])
         current = int(key[4])
-
         solution[situations[key]] = func(north, south, east, west, current)
 
     return solution
