@@ -1,10 +1,12 @@
 # Author : Ammar Abu Shamleh, Modified by Zen Ly
-import Room
-import Robot
-import FileOps
-import GeneticAlgorithm
-import GAConstants
 import time
+
+import FileOps
+import GAConstants
+import GeneticAlgorithm
+import Robot
+import Room
+
 
 # canAvg, avg, cansPickedUpAvg
 # From Ammar's Runner.py
@@ -40,6 +42,7 @@ def testSolution(solution):
     # print 'Strategy: ' + str(solution)
     return canAvg, avg, cansPickedUpAvg
 
+
 if __name__ == '__main__':
     # Read in list of situation mappings from "Situationts.txt" file
     situations = FileOps.readSituations('Situations.txt')
@@ -49,9 +52,11 @@ if __name__ == '__main__':
 
     f = open('parentselection.csv', 'a')
 
+
     def printBoth(val):
         print(str(val))
         f.write(str(val) + '\n')
+
 
     printBoth(time.strftime("START_%Y-%m-%d_%H:%M"))
     printBoth('K\tGeneration\tBest Fitness\tCan Average\tPoint Avg\tCans Picked Up Average')
@@ -65,10 +70,14 @@ if __name__ == '__main__':
 
             generations = 1001  # So that 1000 gets printed
 
+
             def gen_callback(i, fitnesses, curGen, nextGen, bestCurCandidate):
                 canAvg, avg, cansPickedUpAvg = testSolution(curGen[bestCurCandidate])
-                printBoth('{}\t{}\t{}\t{}\t{}\t{}'.format(str(k) + '_' + str(r), i, fitnesses[bestCurCandidate], canAvg, avg, cansPickedUpAvg))
+                printBoth(
+                    '{}\t{}\t{}\t{}\t{}\t{}'.format(str(k) + '_' + str(r), i, fitnesses[bestCurCandidate], canAvg, avg,
+                                                    cansPickedUpAvg))
                 f.flush()
+
 
             GAConstants.generation_callback = gen_callback
 

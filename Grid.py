@@ -24,7 +24,6 @@ def draw_grid(surface, size, cell_size, line_width, line_color):
 
 
 class Grid:
-
     def __init__(self, size, cell_size, line_width):
         # type: ((int, int), (int, int), int) -> None
         self.size = size
@@ -43,12 +42,12 @@ class Grid:
     def cell_pos(self, position):
         # type: ((int, int)) -> (int, int)
         """Returns the position of the cell"""
-        return tuple(self.line_width + (self.cell_size[i] + self.line_width) * position[i] for i in [0,1])
+        return tuple(self.line_width + (self.cell_size[i] + self.line_width) * position[i] for i in [0, 1])
 
     def cell_rect(self, position):
         # type: ((int, int)) -> pygame.Rect
         """Returns a rectangle that contains the cell"""
         return pygame.Rect(
-            tuple(self.line_width + (self.cell_size[i] + self.line_width) * position[i] for i in [0,1]),
+            tuple(self.line_width + (self.cell_size[i] + self.line_width) * position[i] for i in [0, 1]),
             self.cell_size
         )

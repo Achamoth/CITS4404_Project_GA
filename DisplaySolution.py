@@ -1,12 +1,18 @@
 # By Zen Ly
 from __future__ import print_function
+
+import FileOps
+import pygame
+import random
+import sys
 from argparse import ArgumentParser, ArgumentTypeError, ArgumentError
+
 from pygame.locals import *
-from Room import Room
+
+from Facing import Facing
 from Grid import Grid
 from Robot import Robot
-from Facing import Facing
-import sys, math, pygame, FileOps, random
+from Room import Room
 
 
 # Methods are from a previous project, hsl to rgb conversion
@@ -16,7 +22,7 @@ def hsl_to_rgb(h, s, l):
     Reference https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL
     """
     c = (1 - abs(2 * l - 1)) * s
-    h = h * 6 #360/60
+    h = h * 6  # 360/60
     x = c * (1 - abs(h % 2 - 1))
     i = int(h)
     rgb = [0, 0, 0]
@@ -50,6 +56,7 @@ if __name__ == '__main__':
     args.add_argument("-cc", "--can-chance", type=float, default=0.5, required=False,
                       help="Chance for a cell to contain a can")
 
+
     def check_solution(sol):
         sol = eval(sol)
         if not type(sol) is list:
@@ -60,16 +67,24 @@ if __name__ == '__main__':
             raise ArgumentError(sol, "Integers must be within the range [0,6]")
         return sol
 
+
     args.add_argument("-s", "--solution",
                       type=check_solution,
                       # Ammar's 10000 generation, best solution so far.
-                      default=[1, 5, 4, 3, 5, 5, 2, 5, 3, 2, 2, 1, 3, 2, 3, 2, 5, 6, 0, 5, 1, 3, 5, 2, 1, 1, 6, 6, 5, 2, 3, 1, 1, 1, 5,
-                1, 2, 1, 6, 3, 2, 0, 2, 5, 4, 3, 5, 0, 3, 5, 1, 0, 5, 5, 2, 5, 5, 2, 2, 3, 1, 2, 6, 2, 5, 4, 2, 3, 0, 2,
-                5, 4, 0, 5, 6, 3, 2, 1, 0, 2, 1, 0, 5, 4, 0, 5, 2, 2, 0, 0, 2, 2, 4, 2, 2, 6, 3, 6, 4, 0, 5, 6, 3, 0, 6,
-                2, 5, 6, 0, 1, 1, 6, 1, 0, 1, 5, 0, 0, 1, 4, 3, 2, 3, 3, 1, 2, 0, 5, 5, 3, 5, 5, 2, 3, 6, 0, 5, 0, 2, 3,
-                5, 0, 5, 4, 0, 5, 5, 3, 3, 5, 2, 5, 6, 0, 5, 3, 1, 2, 3, 1, 3, 3, 1, 5, 4, 3, 5, 4, 2, 5, 4, 6, 2, 4, 1,
-                2, 4, 2, 5, 6, 3, 5, 6, 3, 5, 3, 1, 4, 5, 1, 5, 6, 1, 1, 3, 1, 5, 4, 1, 2, 6, 0, 2, 5, 2, 5, 5, 1, 5, 0,
-                6, 6, 5, 5, 4, 5, 3, 4, 6, 1, 5, 6, 0, 6, 4, 2, 2, 6, 5, 0, 1, 3, 0, 6, 6, 0, 4, 4, 5, 4, 5, 6, 1],
+                      default=[1, 5, 4, 3, 5, 5, 2, 5, 3, 2, 2, 1, 3, 2, 3, 2, 5, 6, 0, 5, 1, 3, 5, 2, 1, 1, 6, 6, 5, 2,
+                               3, 1, 1, 1, 5,
+                               1, 2, 1, 6, 3, 2, 0, 2, 5, 4, 3, 5, 0, 3, 5, 1, 0, 5, 5, 2, 5, 5, 2, 2, 3, 1, 2, 6, 2, 5,
+                               4, 2, 3, 0, 2,
+                               5, 4, 0, 5, 6, 3, 2, 1, 0, 2, 1, 0, 5, 4, 0, 5, 2, 2, 0, 0, 2, 2, 4, 2, 2, 6, 3, 6, 4, 0,
+                               5, 6, 3, 0, 6,
+                               2, 5, 6, 0, 1, 1, 6, 1, 0, 1, 5, 0, 0, 1, 4, 3, 2, 3, 3, 1, 2, 0, 5, 5, 3, 5, 5, 2, 3, 6,
+                               0, 5, 0, 2, 3,
+                               5, 0, 5, 4, 0, 5, 5, 3, 3, 5, 2, 5, 6, 0, 5, 3, 1, 2, 3, 1, 3, 3, 1, 5, 4, 3, 5, 4, 2, 5,
+                               4, 6, 2, 4, 1,
+                               2, 4, 2, 5, 6, 3, 5, 6, 3, 5, 3, 1, 4, 5, 1, 5, 6, 1, 1, 3, 1, 5, 4, 1, 2, 6, 0, 2, 5, 2,
+                               5, 5, 1, 5, 0,
+                               6, 6, 5, 5, 4, 5, 3, 4, 6, 1, 5, 6, 0, 6, 4, 2, 2, 6, 5, 0, 1, 3, 0, 6, 6, 0, 4, 4, 5, 4,
+                               5, 6, 1],
                       required=False,
                       help="Solution to test (list of 243 integers in range [0,6])")
 
@@ -101,7 +116,7 @@ if __name__ == '__main__':
     DARK_GRAY = hsl_to_rgb(0, 0, 0.2)
     CLEAR = (0, 0, 0, 0)
     RED = hsl_to_rgb(0, 1, 0.5)
-    LIGHT_BLUE = hsl_to_rgb(200.0/360, 1, 0.5)
+    LIGHT_BLUE = hsl_to_rgb(200.0 / 360, 1, 0.5)
 
     # Grid
     grid = Grid((rw, rh), (7, 7), 1)
@@ -175,7 +190,6 @@ if __name__ == '__main__':
     last_pos = (0, 0)
     cans = 0
 
-
     # Robot has a marker on the back right
     # Square is 7 by 7
     # Facing Up -> (5, 5)
@@ -190,11 +204,11 @@ if __name__ == '__main__':
     def updateFacing(facing, prev, curr):
         if prev == curr:
             return facing
-        if(curr[0] > prev[0]):  # Moved Right
+        if (curr[0] > prev[0]):  # Moved Right
             return Facing.RIGHT
-        elif(curr[0] < prev[0]):
+        elif (curr[0] < prev[0]):
             return Facing.LEFT
-        elif(curr[1] > prev[1]):
+        elif (curr[1] > prev[1]):
             return Facing.DOWN
         else:
             return Facing.UP
@@ -203,11 +217,14 @@ if __name__ == '__main__':
     def sumtup(a, b):
         return tuple(map(sum, zip(a, b)))
 
+
     path_last = sumtup(tuple(grid.cell_rect(last_pos)[:2]), path_offsets[Facing.UP.value])
 
     while True:
         clock.tick(fps)
-        pygame.display.set_caption("Robby the Cleaner - Round: {} - Points:{} - Cans:{} ({} Remaining)".format(step, robot.points, cans, room.numCans))
+        pygame.display.set_caption(
+            "Robby the Cleaner - Round: {} - Points:{} - Cans:{} ({} Remaining)".format(step, robot.points, cans,
+                                                                                        room.numCans))
 
         # Events
         for event in pygame.event.get():
@@ -264,7 +281,7 @@ if __name__ == '__main__':
             continue
         step += 1
 
-        #Path Drawing only happens when the logic changes
+        # Path Drawing only happens when the logic changes
         if not no_path and last_pos != (robot.x, robot.y):
             last_pos_path = grid.cell_pos(last_pos)
             # Fade away old values
@@ -274,10 +291,10 @@ if __name__ == '__main__':
             draw_anti = path_facing.rotateClockwise() == new_facing
             while path_facing != new_facing:
                 next_facing = path_facing.rotateTowards(new_facing)
-                if(path_facing.rotateAnticlockwise() == next_facing):
+                if (path_facing.rotateAnticlockwise() == next_facing):
                     pygame.draw.line(path_buffer, PATH_COLOUR,
-                                      sumtup(last_pos_path, path_offsets[path_facing.value]),
-                                      sumtup(last_pos_path, path_offsets[next_facing.value]), 1)
+                                     sumtup(last_pos_path, path_offsets[path_facing.value]),
+                                     sumtup(last_pos_path, path_offsets[next_facing.value]), 1)
                 path_facing = next_facing
 
             if draw_anti:
@@ -293,4 +310,3 @@ if __name__ == '__main__':
         last_pos = (robot.x, robot.y)
         last_action = robot.decide(room, situations)
         cans += last_cans - room.numCans
-

@@ -1,9 +1,10 @@
 # Author : Zen Ly
-import FileOps
-import GeneticAlgorithm
-import GAConstants
-import time
 import random
+import time
+
+import FileOps
+import GAConstants
+import GeneticAlgorithm
 import ParentSelectionExperiment
 
 if __name__ == '__main__':
@@ -12,15 +13,19 @@ if __name__ == '__main__':
 
     f = open('parentselectionother.csv', 'a')
 
+
     def printBoth(val):
         print(str(val))
         f.write(str(val) + '\n')
 
+
     printBoth(time.strftime("START_%Y-%m-%d_%H:%M"))
     printBoth('Function\tGeneration\tBest Fitness\tCan Average\tPoint Avg\tCans Picked Up Average')
 
+
     def random_sel(population, popSize, fitnesses):
         return population[random.randint(0, popSize - 1)]
+
 
     # Negative fitness is treated as zero
     # If total fitness is zero, randomly selects a parent
@@ -39,8 +44,9 @@ if __name__ == '__main__':
             return population[ind]
         raise
 
+
     #
-    #def truncation_half(population, popSize, fitnesses):
+    # def truncation_half(population, popSize, fitnesses):
     #    # Find
 
 
@@ -58,6 +64,7 @@ if __name__ == '__main__':
                 bestFitness = curFitness
         return best
 
+
     parent_selection_functions = [roulette_wheel, random_sel, tournament_k15]
 
     for parent_selection_func in parent_selection_functions:
@@ -65,11 +72,13 @@ if __name__ == '__main__':
 
         generations = 4001  # So that 1000 gets printed
 
+
         def gen_callback(i, fitnesses, curGen, nextGen, bestCurCandidate):
             canAvg, avg, cansPickedUpAvg = ParentSelectionExperiment.testSolution(situations, curGen[bestCurCandidate])
             printBoth('{}\t{}\t{}\t{}\t{}\t{}'.format(parent_selection_func.__name__
                                                       , i, fitnesses[bestCurCandidate], canAvg, avg, cansPickedUpAvg))
             f.flush()
+
 
         GAConstants.generation_callback = gen_callback
 
