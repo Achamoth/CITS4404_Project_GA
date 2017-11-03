@@ -3,16 +3,18 @@
 import random
 import sys
 
+
 class Room(object):
 
     #2d array (10 by 10). 1 in any tile with a can, 0 in any empty tile
-    cans = [ [ 0 for x in range(10) ] for y in range(10) ]
+    gridLength = 20
+    cans = [ [ 0 for x in range(gridLength) ] for y in range(gridLength) ]
     numCans = 0
 
     def __init__(self):
         #Spread cans around room randomly
-        for i in range(0, 10):
-            for j in range(0, 10):
+        for i in range(0, self.gridLength):
+            for j in range(0, self.gridLength):
                 #50/50 chance of a tile having a can
                 self.cans[i][j] = random.randint(0, 1)
                 if self.cans[i][j] == 1:
@@ -29,7 +31,7 @@ class Room(object):
 
     def isWall(self, x, y):
         #If the specified coordinate is out of bounds (i.e. beyond a wall, or is a wall), return true. Otherwise return false
-        if x < 0 or x > 9 or y < 0 or y > 9:
+        if x < 0 or x > self.gridLength-1 or y < 0 or y > self.gridLength-1:
             #Coordinate is a wall (or out of bounds)
             return True
         else:
@@ -66,8 +68,8 @@ class Room(object):
 
     def printRoom(self):
         #Print the room as a string
-        for x in range(9):
-            for y in range(9):
+        for x in range(self.gridLength-1):
+            for y in range(self.gridLength-1):
                 if(self.cans[x][y] == 1):
                     sys.stdout.write('C ')
                 else:

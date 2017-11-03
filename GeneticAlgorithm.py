@@ -183,8 +183,8 @@ def randomlyMutate(population):
 
     #Loop over all individuals
     for individual in population:
-        #Each individual has a 1/6 chance of mutating
-        if(random.randint(1,6) == 1):
+        #Each individual has a 1/4 chance of mutating
+        if(random.randint(1,4) == 1):
             #Mutate the individual. Choose a random point in the individual's genome, and mutate it
             point = random.randint(0,242)
             individual[point] = random.randint(0,6)
