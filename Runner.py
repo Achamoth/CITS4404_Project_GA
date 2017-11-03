@@ -53,7 +53,7 @@ def runSimulation(numGens=6000, numSplices=2):
         canSum += room.getNumCans()
         # Assign best solution to robot as its strategy
         robot.changeStrat(solution)
-        for j in range(800):
+        for j in range(200):
             # Run 200 actions using strategy
             robot.decide(room, situations)
         # Add number of points to cumulative sum
