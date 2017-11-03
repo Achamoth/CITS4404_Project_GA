@@ -3,6 +3,7 @@
 import random
 import sys
 
+
 class Room(object):
 
     #2d array (10 by 10). 1 in any tile with a can, 0 in any empty tile

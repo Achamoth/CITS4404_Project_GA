@@ -48,7 +48,7 @@ def checkFitness(individual):
     #Return the average as a fitness score for the individual
     return avg;
 
-def naturalSelection(numGens):
+def naturalSelection(numGens, numSplices):
     #This function uses a genetic algorithm to find a good solution over the specified number of generations
 
     #Seed random number generator
@@ -66,7 +66,7 @@ def naturalSelection(numGens):
         fitnesses = findAllFitnesses(curGen, pool)
 
         #Mate pairs of individuals probabalistically based on fitnesses to produce offspring
-        nextGen = mateParents(curGen, fitnesses)
+        nextGen = mateParents(curGen, fitnesses, numSplices)
 
         #Give each child a chance to mutate
         randomlyMutate(nextGen)
@@ -110,7 +110,7 @@ def findAllFitnesses(population, pool):
 
 
 
-def mateParents(population, fitnesses):
+def mateParents(population, fitnesses, numSplices):
     #Given a population of solution candidates, and an array of their fitnesses, probabalistically mate parents and produce offspring
     #Return populiation of offspring (as array of solution candidates), of same size as initial population
 
@@ -126,7 +126,7 @@ def mateParents(population, fitnesses):
         parents = []
         parents.append(findParent(population, initPopSize, fitnesses))
         parents.append(findParent(population, initPopSize, fitnesses))
-        curOffspring = getChildren(parents)
+        curOffspring = getChildren(parents, numSplices)
         offspring[numOffspring] = curOffspring[0]
         offspring[numOffspring+1] = curOffspring[1]
         #TODO: Can add in a check for fitness on offspring here to determine whether or not to add them
@@ -153,28 +153,39 @@ def findParent(population, popSize, fitnesses):
             bestFitness = curFitness
     return best
 
-def getChildren(parents):
-    #Given a pair of parents, generate and return two children
-    #TODO: Experiment with different variants of this function
-    children = []
-    splicePoint = random.randint(1,240)
-    # splicePoint = 242/2 #TODO: Experiment with different values
-    #Get 0-splicePoint chunk from first parent
-    parent1FirstChunk = (parents[0])[0:splicePoint]
-    #Get splicePoint-242 chunk from first parent
-    parent1SecondChunk = (parents[0])[splicePoint:len(parents[0])]
-    #Get 0-splicePoint chunk from second parent
-    parent2FirstChunk = (parents[1])[0:splicePoint]
-    #Get splicePoint-242 chunk from second parent
-    parent2SecondChunk = (parents[1])[splicePoint:len(parents[1])]
+def getChildren(parents, numSplices):
+    splicePoints = [0 for x in range(numSplices)]
+    for i in range(numSplices):
+        splicePoints[i] = random.randint(1,240)
+    splicePoints.sort()
 
-    #Create children
-    child1 = parent1FirstChunk + parent2SecondChunk
-    child2 = parent2FirstChunk + parent1SecondChunk
+    previous = 0
+    child1chunk = []
+    child2chunk = []
+    child1 = []
+    child2 = []
+    for i in range(numSplices):
+        if i % 2 == 1: #odd, swap
+            child1chunk = (parents[1])[previous:splicePoints[i]]
+            child2chunk = (parents[0])[previous:splicePoints[i]]
+        else:
+            child1chunk = (parents[0])[previous:splicePoints[i]]
+            child2chunk = (parents[1])[previous:splicePoints[i]]
+
+        child1 += child1chunk
+        child2 += child2chunk
+        previous = splicePoints[i]
+
+    if numSplices % 2 == 1: #odd, swap
+        child1 += (parents[1])[previous:len(parents[1])]
+        child2 += (parents[0])[previous:len(parents[0])]
+    else:
+        child1 += (parents[0])[previous:len(parents[0])]
+        child2 += (parents[1])[previous:len(parents[1])]
+
+    children = []
     children.append(child1)
     children.append(child2)
-
-    #Return children
     return children
 
 def randomlyMutate(population):
@@ -183,8 +194,8 @@ def randomlyMutate(population):
 
     #Loop over all individuals
     for individual in population:
-        #Each individual has a 1/6 chance of mutating
-        if(random.randint(1,6) == 1):
+        #Each individual has a 1/4 chance of mutating
+        if(random.randint(1,4) == 1):
             #Mutate the individual. Choose a random point in the individual's genome, and mutate it
             point = random.randint(0,242)
             individual[point] = random.randint(0,6)
